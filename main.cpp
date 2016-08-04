@@ -74,7 +74,7 @@ InfoWindow::InfoWindow(QWidget *parent) :
   QWidget(parent)
 // =============================================================================
 {
-    this->setWindowIcon(QIcon(":/versalogo.png"));
+    this->setWindowIcon(QIcon(":/resources/versalogo.png"));
     this->setWindowTitle("About");
     this->setWindowFlags(Qt::Window);
 
@@ -179,7 +179,7 @@ MainWindow::MainWindow(QWidget *parent) :
   QWidget(parent)
 // =============================================================================
 {
- this->setWindowIcon(QIcon(":/versalogo.png"));
+ this->setWindowIcon(QIcon(":/resources/versalogo.png"));
  this->setWindowTitle("ASTM Pipe Sizes Calculator");
 
  units = new bool(1);
@@ -214,7 +214,7 @@ MainWindow::MainWindow(QWidget *parent) :
  nps_info = new QToolButton;
  nps_info->setIconSize(QSize(24, 24));
  nps_info->setAutoRaise(true);
- nps_info->setIcon(QIcon(":/info.png"));
+ nps_info->setIcon(QIcon(":/resources/info.png"));
 
  //------------------------------------------------------------------------ OD -
 
@@ -248,7 +248,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
  //---------------------------------------------------------------------- Logo -
 
- QPixmap mypix (":/VersaProfiles_Horizontal_COUL.png");
+ QPixmap mypix (":/resources/VersaProfiles_Horizontal_COUL.png");
  qlogo = new QLabel;
  qlogo->setPixmap(mypix);
  qlogo->setScaledContents(true);

@@ -7,7 +7,7 @@ TARGET = Pipe
 INCLUDEPATH += .
 QMAKE_CXXFLAGS += -std=c++11
 QT += core gui widgets
-win32:RC_ICONS += versalogo.ico
+win32:RC_ICONS += resources/versalogo.ico
 
 # Input
 HEADERS += mainwindow.h infowindow.h
