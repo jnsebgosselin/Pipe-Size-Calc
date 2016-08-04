@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>VersaProfiles_Horizontal_BW.png</file>
+        <file>info.png</file>
+        <file>versalogo.png</file>
+        <file>VersaProfiles_Horizontal_COUL.png</file>
+        <file>versalogo.ico</file>
+    </qresource>
+</RCC>
