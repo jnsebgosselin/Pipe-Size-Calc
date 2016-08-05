@@ -220,7 +220,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
  tp = "<p>The outside diameters and tolerances for the IPS values of ";
  tp += "1/2, 3/4, 1, 1 1/4, 1 1/2, 2, 3, 4, 6, 8, and 10 ";
- tp += "are as in Table 2 of:<p>";
+ tp += "are specified as in Table 2 of:<p>";
 
  tp += "<p><i>";
  tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
@@ -228,7 +228,7 @@ MainWindow::MainWindow(QWidget *parent) :
  tp += "</i></p>";
 
  tp += "The outside diameters and tolerances for the remaining IPS values ";
- tp += "are as in Table 1 of:</p>";
+ tp += "(1/8, 1/4, 3/8, 2 1/2, 3 1/2, 5 are specified as in Table 1 of:</p>)"
 
  tp += "<p><i>";
  tp += "ASTM D2241-04a: Standard Specification for Poly(Vinyl Chloride)";
