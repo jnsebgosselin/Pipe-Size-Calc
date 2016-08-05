@@ -159,8 +159,7 @@ void InfoWindow::firstShow()  // ---------------------------------- first show -
  int ht = this->qtext->sizeHint().height();
  int hd = this->qtext->document()->size().height();
 
- this->setFixedHeight(hd + hw - ht);
- this->setFixedWidth(this->size().width());
+ this->setFixedSize(this->size().width(), hd + hw - ht);
 
  QRect qr = this->frameGeometry();
  int wp = this->parentWidget()->frameGeometry().width();
@@ -180,7 +179,7 @@ MainWindow::MainWindow(QWidget *parent) :
 // =============================================================================
 {
  this->setWindowIcon(QIcon(":/resources/versalogo.png"));
- this->setWindowTitle("ASTM Pipe Sizes Calculator");
+ this->setWindowTitle("Pipe Size Calculator");
 
  units = new bool(1);
  qinfo = new InfoWindow(this);
@@ -188,7 +187,7 @@ MainWindow::MainWindow(QWidget *parent) :
  //----------------------------------------------------------------- NPS & SDR -
 
  QString tp;
- tp = "<p>The Dimension Ration (DR) is the ratio of the pipe ";
+ tp = "<p>The Dimension Ratio (DR) is the ratio of the pipe ";
  tp += "outside diameter (OD) to the minimum wall thickness (t<sub>min</sub>) ";
  tp += "and can be expressed as:</p>";
  tp += "<p align=center>DR = OD / t<sub>min</sub></p>";
@@ -215,30 +214,60 @@ MainWindow::MainWindow(QWidget *parent) :
  nps_info->setIconSize(QSize(24, 24));
  nps_info->setAutoRaise(true);
  nps_info->setIcon(QIcon(":/resources/info.png"));
+ nps_info->setToolTip("Show Copyrights and Licensing information");
 
  //------------------------------------------------------------------------ OD -
 
- qlabl3 = new QLabel("Outside Diameter (OD):");
+ tp = "<p>The outside diameters and tolerances for the IPS values of ";
+ tp += "1/2, 3/4, 1, 1 1/4, 1 1/2, 2, 3, 4, 6, 8, and 10 ";
+ tp += "are as in Table 2 of:<p>";
+
+ tp += "<p><i>";
+ tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
+ tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter";
+ tp += "</i></p>";
+
+ tp += "The outside diameters and tolerances for the remaining IPS values ";
+ tp += "are as in Table 1 of:</p>";
+
+ tp += "<p><i>";
+ tp += "ASTM D2241-04a: Standard Specification for Poly(Vinyl Chloride)";
+ tp += "(PVC) Pressure-Rated Pipe (SDR Series)";
+ tp += "</i></p>";
+
+ OD_labl = new QLabel("Outside Diameter (OD):");
+ OD_labl->setToolTip(tp);
  OD_widg = new QTextEdit;
  OD_widg->setReadOnly(true);
+ OD_widg->setToolTip(tp);
 
  //------------------------------------------------------------------------ ID -
 
- qlabl4 = new QLabel("Inside Diameter (ID):");
+ tp = "<p>The inside diameter is calculated from the outside diameter ";
+ tp += "and the average wall tickness, such as:";
+ tp += "<p align=center>ID = OD - (2 x t<sub>avg</sub>)</p>";
+ tp += "<p>where:</p>";
+ tp += "<p align=center>t<sub>avg</sub> = t<sub>min</sub> + tol/2</p>";
+
+ ID_labl = new QLabel("Inside Diameter (ID):");
+ ID_labl->setToolTip(tp);
  ID_widg = new QTextEdit;
  ID_widg->setReadOnly(true);
+ ID_widg->setToolTip(tp);
 
  //------------------------------------------------------------------------ WT -
 
  tp = "<p>The minimum is the lowest wall thickness of the pipe at ";
- tp += "any cross section and is calculated with:.</p>";
- tp += "<p align=center>v = OD / DR</p>";
+ tp += "any cross section and is calculated with:</p>";
+ tp += "<p align=center>t<sub>min</sub> = OD / DR</p>";
  tp += "<p> The maximum permitted wall thickness, at any cross section, ";
  tp += "is the minimum wall thickness plus the stated tolerance, such as:";
  tp += "<p align=center>t<sub>max</sub> = t<sub>min</sub> + tol</p>";
  tp += "All tolerances are on the plus side of the minimum requirement ";
  tp += "and equal 12% of the minimum wall thickness such as:</p>";
  tp += "<p align=center>tol = 0.12 * t<sub>min</sub></p>";
+ tp += "<p>The lowest permitted wall thickness is 0.060 in., while the lowest ";
+ tp += "permitted tolerance is 0.020 in.";
 
  WT_labl = new QLabel("Min. Wall Thickness (t<sub>min</sub>):");
  WT_labl->setToolTip(tp);
@@ -254,7 +283,7 @@ MainWindow::MainWindow(QWidget *parent) :
  qlogo->setScaledContents(true);
  qlogo->setFixedSize(0, 0);
 
- //-------------------------------------------------------------- Main Layout -
+ //--------------------------------------------------------------- Main Layout -
 
  QGridLayout *layout = new QGridLayout;
  int row = 0;
@@ -264,10 +293,10 @@ MainWindow::MainWindow(QWidget *parent) :
  layout->addWidget(sdr_labl, row, 0);
  layout->addWidget(sdr_widg, row, 1);
  row = row + 1;
- layout->addWidget(qlabl3, row, 0);
+ layout->addWidget(OD_labl, row, 0);
  layout->addWidget(OD_widg, row, 1, 1, 3);
  row = row + 1;
- layout->addWidget(qlabl4, row, 0);
+ layout->addWidget(ID_labl, row, 0);
  layout->addWidget(ID_widg, row, 1, 1, 3);
  row = row + 1;
  layout->addWidget(WT_labl, row, 0);

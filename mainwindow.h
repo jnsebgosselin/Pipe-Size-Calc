@@ -26,8 +26,8 @@ private:
  QLabel *qlogo;
  QLabel *qlabl1;
  QLabel *sdr_labl;
- QLabel *qlabl3;
- QLabel *qlabl4;
+ QLabel *OD_labl;
+ QLabel *ID_labl;
  QLabel *WT_labl;
  QComboBox *nps_widg;
  QDoubleSpinBox *sdr_widg;
