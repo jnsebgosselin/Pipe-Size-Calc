@@ -1,4 +1,4 @@
-/*******************************************************************************
+/******************************************************************************
 copyright 2016 Jean-Sébastien Gosselin
 email: jean-sebastien.gosselin@ete.inrs.ca
 
@@ -14,7 +14,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*******************************************************************************/
+******************************************************************************/
 
 #include <QApplication>
 #include <QTextEdit>
@@ -69,10 +69,10 @@ int main(int argv, char **args)
     return app.exec();
 }
 
-// =============================================================================
+// ============================================================================
 InfoWindow::InfoWindow(QWidget *parent) :
   QWidget(parent)
-// =============================================================================
+// ============================================================================
 {
     this->setWindowIcon(QIcon(":/resources/versalogo.png"));
     this->setWindowTitle("About");
@@ -146,7 +146,7 @@ InfoWindow::InfoWindow(QWidget *parent) :
     this->setLayout(qgrid);
 }
 
-void InfoWindow::firstShow()  // ---------------------------------- first show -
+void InfoWindow::firstShow()  // --------------------------------- first show -
 {
  this->setAttribute (Qt::WA_DontShowOnScreen, true) ;
  this->show();
@@ -173,10 +173,10 @@ void InfoWindow::firstShow()  // ---------------------------------- first show -
  this->setAttribute (Qt::WA_DontShowOnScreen, false) ;
 }
 
-// =============================================================================
+// ============================================================================
 MainWindow::MainWindow(QWidget *parent) :
   QWidget(parent)
-// =============================================================================
+// ============================================================================
 {
  this->setWindowIcon(QIcon(":/resources/versalogo.png"));
  this->setWindowTitle("Pipe Size Calculator");
@@ -184,15 +184,15 @@ MainWindow::MainWindow(QWidget *parent) :
  units = new bool(1);
  qinfo = new InfoWindow(this);
 
- //----------------------------------------------------------------- NPS & SDR -
+ //---------------------------------------------------------------- NPS & SDR -
 
  QString tp;
  tp = "<p>The Dimension Ratio (DR) is the ratio of the pipe ";
- tp += "outside diameter (OD) to the minimum wall thickness (t<sub>min</sub>) ";
- tp += "and can be expressed as:</p>";
+ tp += "outside diameter (OD) to the minimum wall thickness ";
+ tp += "(t<sub>min</sub>) and can be expressed as:</p>";
  tp += "<p align=center>DR = OD / t<sub>min</sub></p>";
- tp += "<p>The pressure rating is uniform for all nominal sizes of pipe for a";
- tp += " given PE pipe material and DR.</p>";
+ tp += "<p>The pressure rating is uniform for all nominal sizes of pipe for ";
+ tp += "a given PE pipe material and DR.</p>";
 
  qlabl1 = new QLabel("Iron Pipe Size (IPS) :");
  nps_widg = new QComboBox;
@@ -216,7 +216,7 @@ MainWindow::MainWindow(QWidget *parent) :
  nps_info->setIcon(QIcon(":/resources/info.png"));
  nps_info->setToolTip("Show Copyrights and Licensing information");
 
- //------------------------------------------------------------------------ OD -
+ //----------------------------------------------------------------------- OD -
 
  tp = "<p>The outside diameters and tolerances for the IPS values of ";
  tp += "1/2, 3/4, 1, 1 1/4, 1 1/2, 2, 3, 4, 6, 8, and 10 ";
@@ -241,7 +241,7 @@ MainWindow::MainWindow(QWidget *parent) :
  OD_widg->setReadOnly(true);
  OD_widg->setToolTip(tp);
 
- //------------------------------------------------------------------------ ID -
+ //----------------------------------------------------------------------- ID -
 
  tp = "<p>The inside diameter is calculated from the outside diameter ";
  tp += "and the average wall tickness, such as:";
@@ -255,7 +255,7 @@ MainWindow::MainWindow(QWidget *parent) :
  ID_widg->setReadOnly(true);
  ID_widg->setToolTip(tp);
 
- //------------------------------------------------------------------------ WT -
+ //----------------------------------------------------------------------- WT -
 
  tp = "<p>The minimum is the lowest wall thickness of the pipe at ";
  tp += "any cross section and is calculated with:</p>";
@@ -266,8 +266,8 @@ MainWindow::MainWindow(QWidget *parent) :
  tp += "All tolerances are on the plus side of the minimum requirement ";
  tp += "and equal 12% of the minimum wall thickness such as:</p>";
  tp += "<p align=center>tol = 0.12 * t<sub>min</sub></p>";
- tp += "<p>The lowest permitted wall thickness is 0.060 in., while the lowest ";
- tp += "permitted tolerance is 0.020 in.";
+ tp += "<p>The lowest permitted wall thickness is 0.060 in., while the lowest";
+ tp += " permitted tolerance is 0.020 in.";
 
  WT_labl = new QLabel("Min. Wall Thickness (t<sub>min</sub>):");
  WT_labl->setToolTip(tp);
@@ -275,7 +275,7 @@ MainWindow::MainWindow(QWidget *parent) :
  WT_widg->setReadOnly(true);
  WT_widg->setToolTip(tp);
 
- //---------------------------------------------------------------------- Logo -
+ //--------------------------------------------------------------------- Logo -
 
  QPixmap mypix (":/resources/VersaProfiles_Horizontal_COUL.png");
  qlogo = new QLabel;
@@ -283,7 +283,7 @@ MainWindow::MainWindow(QWidget *parent) :
  qlogo->setScaledContents(true);
  qlogo->setFixedSize(0, 0);
 
- //--------------------------------------------------------------- Main Layout -
+ //-------------------------------------------------------------- Main Layout -
 
  QGridLayout *layout = new QGridLayout;
  int row = 0;
@@ -313,12 +313,12 @@ MainWindow::MainWindow(QWidget *parent) :
  this->setLayout(layout);
  this->npsChanged();
 
-connect(nps_widg, SIGNAL (currentIndexChanged(int)), this, SLOT (npsChanged()));
-connect(sdr_widg, SIGNAL (valueChanged(double)), this, SLOT (npsChanged()));
-connect(nps_info, SIGNAL (clicked(bool)), this, SLOT (showInfo()));
+connect(nps_widg, SIGNAL(currentIndexChanged(int)), this, SLOT (npsChanged()));
+connect(sdr_widg, SIGNAL(valueChanged(double)), this, SLOT (npsChanged()));
+connect(nps_info, SIGNAL(clicked(bool)), this, SLOT (showInfo()));
 }
 
-void MainWindow::show()  // --------------------------------------------- Show -
+void MainWindow::show()  // -------------------------------------------- Show -
 {
  QFontMetrics fm(ID_widg->fontMetrics());
  int pxw = fm.boundingRect("(666.66 mm + 66.66 mm)").width() + 12;
@@ -350,11 +350,11 @@ void MainWindow::show()  // --------------------------------------------- Show -
  qinfo->firstShow();
 }
 
-void MainWindow::showInfo()  // ------------------------------------ Show Info -
+void MainWindow::showInfo()  // ----------------------------------- Show Info -
 {
  qinfo->show();
 }
-void MainWindow::npsChanged()  // --------------------------------- npsChanged -
+void MainWindow::npsChanged()  // -------------------------------- npsChanged -
 {
  int i = nps_widg->currentIndex();
  double od = OD[i];
