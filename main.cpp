@@ -148,29 +148,29 @@ InfoWindow::InfoWindow(QWidget *parent) :
 
 void InfoWindow::firstShow()  // --------------------------------- first show -
 {
- this->setAttribute (Qt::WA_DontShowOnScreen, true) ;
- this->show();
+    this->setAttribute (Qt::WA_DontShowOnScreen, true) ;
+    this->show();
 
- QEventLoop EventLoop (this) ;
- for (int i = 0 ; i < 10 ; i++)
-   if (!EventLoop.processEvents()) break ;
+    QEventLoop EventLoop (this) ;
+    for (int i = 0 ; i < 10 ; i++)
+        if (!EventLoop.processEvents()) break ;
 
- int hw = this->sizeHint().height();
- int ht = this->qtext->sizeHint().height();
- int hd = this->qtext->document()->size().height();
+    int hw = this->sizeHint().height();
+    int ht = this->qtext->sizeHint().height();
+    int hd = this->qtext->document()->size().height();
 
- this->setFixedSize(this->size().width(), hd + hw - ht);
+    this->setFixedSize(this->size().width(), hd + hw - ht);
 
- QRect qr = this->frameGeometry();
- int wp = this->parentWidget()->frameGeometry().width();
- int hp = this->parentWidget()->frameGeometry().height();
- QPoint cp = this->parentWidget()->mapToGlobal(QPoint(wp/2, hp/2));
- qr.moveCenter(cp);
+    QRect qr = this->frameGeometry();
+    int wp = this->parentWidget()->frameGeometry().width();
+    int hp = this->parentWidget()->frameGeometry().height();
+    QPoint cp = this->parentWidget()->mapToGlobal(QPoint(wp/2, hp/2));
+    qr.moveCenter(cp);
 
- this->move(qr.topLeft());
+    this->move(qr.topLeft());
 
- this->hide();
- this->setAttribute (Qt::WA_DontShowOnScreen, false) ;
+    this->hide();
+    this->setAttribute (Qt::WA_DontShowOnScreen, false) ;
 }
 
 // ============================================================================
@@ -178,140 +178,141 @@ MainWindow::MainWindow(QWidget *parent) :
   QWidget(parent)
 // ============================================================================
 {
- this->setWindowIcon(QIcon(":/resources/versalogo.png"));
- this->setWindowTitle("Pipe Size Calculator");
+    this->setWindowIcon(QIcon(":/resources/versalogo.png"));
+    this->setWindowTitle("Pipe Size Calculator");
 
- units = new bool(1);
- qinfo = new InfoWindow(this);
+    units = new bool(1);
+    qinfo = new InfoWindow(this);
 
- //---------------------------------------------------------------- NPS & SDR -
+    //------------------------------------------------------------- NPS & SDR -
 
- QString tp;
- tp = "<p>The Dimension Ratio (DR) is the ratio of the pipe ";
- tp += "outside diameter (OD) to the minimum wall thickness ";
- tp += "(t<sub>min</sub>) and can be expressed as:</p>";
- tp += "<p align=center>DR = OD / t<sub>min</sub></p>";
- tp += "<p>The pressure rating is uniform for all nominal sizes of pipe for ";
- tp += "a given PE pipe material and DR.</p>";
+    QString tp;
+    tp = "<p>The Dimension Ratio (DR) is the ratio of the pipe ";
+    tp += "outside diameter (OD) to the minimum wall thickness ";
+    tp += "(t<sub>min</sub>) and can be expressed as:</p>";
+    tp += "<p align=center>DR = OD / t<sub>min</sub></p>";
+    tp += "<p>The pressure rating is uniform for all nominal sizes of pipe ";
+    tp += "for a given PE pipe material and DR.</p>";
 
- qlabl1 = new QLabel("Iron Pipe Size (IPS) :");
- nps_widg = new QComboBox;
+    qlabl1 = new QLabel("Iron Pipe Size (IPS) :");
+    nps_widg = new QComboBox;
 
- for (std::size_t i = 0, max = IPS.size(); i != max; ++i)
- {
-  nps_widg->addItem(IPS[i].c_str());
- }
+    for (std::size_t i = 0, max = IPS.size(); i != max; ++i)
+    {
+        nps_widg->addItem(IPS[i].c_str());
+    }
 
- sdr_labl = new QLabel("Dimension Ratio (DR) :");
- sdr_labl->setToolTip(tp);
- sdr_widg = new QDoubleSpinBox;
- sdr_widg->setValue(11);
- sdr_widg->setMinimum(7);
- sdr_widg->setSingleStep(0.5);
- sdr_widg->setToolTip(tp);
+    sdr_labl = new QLabel("Dimension Ratio (DR) :");
+    sdr_labl->setToolTip(tp);
+    sdr_widg = new QDoubleSpinBox;
+    sdr_widg->setValue(11);
+    sdr_widg->setMinimum(7);
+    sdr_widg->setSingleStep(0.5);
+    sdr_widg->setToolTip(tp);
 
- nps_info = new QToolButton;
- nps_info->setIconSize(QSize(24, 24));
- nps_info->setAutoRaise(true);
- nps_info->setIcon(QIcon(":/resources/info.png"));
- nps_info->setToolTip("Show Copyrights and Licensing information");
+    nps_info = new QToolButton;
+    nps_info->setIconSize(QSize(24, 24));
+    nps_info->setAutoRaise(true);
+    nps_info->setIcon(QIcon(":/resources/info.png"));
+    nps_info->setToolTip("Show Copyrights and Licensing information");
 
- //----------------------------------------------------------------------- OD -
+    //-------------------------------------------------------------------- OD -
 
- tp = "<p>The outside diameters and tolerances for the IPS values of ";
- tp += "1/2, 3/4, 1, 1 1/4, 1 1/2, 2, 3, 4, 6, 8, and 10 ";
- tp += "are specified as in Table 2 of:<p>";
+    tp = "<p>The outside diameters and tolerances for the IPS values of ";
+    tp += "1/2, 3/4, 1, 1 1/4, 1 1/2, 2, 3, 4, 6, 8, and 10 ";
+    tp += "are specified as in Table 2 of:<p>";
 
- tp += "<p><i>";
- tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
- tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter";
- tp += "</i></p>";
+    tp += "<p><i>";
+    tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
+    tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter";
+    tp += "</i></p>";
 
- tp += "The outside diameters and tolerances for the remaining IPS values ";
- tp += "(1/8, 1/4, 3/8, 2 1/2, 3 1/2, 5 are specified as in Table 1 of:</p>)"
+    tp += "The outside diameters and tolerances for the remaining IPS values ";
+    tp += "(1/8, 1/4, 3/8, 2 1/2, 3 1/2, 5 are specified as in ";
+    tp += "Table 1 of:</p>)";
 
- tp += "<p><i>";
- tp += "ASTM D2241-04a: Standard Specification for Poly(Vinyl Chloride)";
- tp += "(PVC) Pressure-Rated Pipe (SDR Series)";
- tp += "</i></p>";
+    tp += "<p><i>";
+    tp += "ASTM D2241-04a: Standard Specification for Poly(Vinyl Chloride)";
+    tp += "(PVC) Pressure-Rated Pipe (SDR Series)";
+    tp += "</i></p>";
 
- OD_labl = new QLabel("Outside Diameter (OD):");
- OD_labl->setToolTip(tp);
- OD_widg = new QTextEdit;
- OD_widg->setReadOnly(true);
- OD_widg->setToolTip(tp);
+    OD_labl = new QLabel("Outside Diameter (OD):");
+    OD_labl->setToolTip(tp);
+    OD_widg = new QTextEdit;
+    OD_widg->setReadOnly(true);
+    OD_widg->setToolTip(tp);
 
- //----------------------------------------------------------------------- ID -
+    //-------------------------------------------------------------------- ID -
 
- tp = "<p>The inside diameter is calculated from the outside diameter ";
- tp += "and the average wall tickness, such as:";
- tp += "<p align=center>ID = OD - (2 x t<sub>avg</sub>)</p>";
- tp += "<p>where:</p>";
- tp += "<p align=center>t<sub>avg</sub> = t<sub>min</sub> + tol/2</p>";
+    tp = "<p>The inside diameter is calculated from the outside diameter ";
+    tp += "and the average wall tickness, such as:";
+    tp += "<p align=center>ID = OD - (2 x t<sub>avg</sub>)</p>";
+    tp += "<p>where:</p>";
+    tp += "<p align=center>t<sub>avg</sub> = t<sub>min</sub> + tol/2</p>";
 
- ID_labl = new QLabel("Inside Diameter (ID):");
- ID_labl->setToolTip(tp);
- ID_widg = new QTextEdit;
- ID_widg->setReadOnly(true);
- ID_widg->setToolTip(tp);
+    ID_labl = new QLabel("Inside Diameter (ID):");
+    ID_labl->setToolTip(tp);
+    ID_widg = new QTextEdit;
+    ID_widg->setReadOnly(true);
+    ID_widg->setToolTip(tp);
 
- //----------------------------------------------------------------------- WT -
+    //-------------------------------------------------------------------- WT -
 
- tp = "<p>The minimum is the lowest wall thickness of the pipe at ";
- tp += "any cross section and is calculated with:</p>";
- tp += "<p align=center>t<sub>min</sub> = OD / DR</p>";
- tp += "<p> The maximum permitted wall thickness, at any cross section, ";
- tp += "is the minimum wall thickness plus the stated tolerance, such as:";
- tp += "<p align=center>t<sub>max</sub> = t<sub>min</sub> + tol</p>";
- tp += "All tolerances are on the plus side of the minimum requirement ";
- tp += "and equal 12% of the minimum wall thickness such as:</p>";
- tp += "<p align=center>tol = 0.12 * t<sub>min</sub></p>";
- tp += "<p>The lowest permitted wall thickness is 0.060 in., while the lowest";
- tp += " permitted tolerance is 0.020 in.";
+    tp = "<p>The minimum is the lowest wall thickness of the pipe at ";
+    tp += "any cross section and is calculated with:</p>";
+    tp += "<p align=center>t<sub>min</sub> = OD / DR</p>";
+    tp += "<p> The maximum permitted wall thickness, at any cross section, ";
+    tp += "is the minimum wall thickness plus the stated tolerance, such as:";
+    tp += "<p align=center>t<sub>max</sub> = t<sub>min</sub> + tol</p>";
+    tp += "All tolerances are on the plus side of the minimum requirement ";
+    tp += "and equal 12% of the minimum wall thickness such as:</p>";
+    tp += "<p align=center>tol = 0.12 * t<sub>min</sub></p>";
+    tp += "<p>The lowest permitted wall thickness is 0.060 in., while the ";
+    tp += "lowest permitted tolerance is 0.020 in.";
 
- WT_labl = new QLabel("Min. Wall Thickness (t<sub>min</sub>):");
- WT_labl->setToolTip(tp);
- WT_widg = new QTextEdit;
- WT_widg->setReadOnly(true);
- WT_widg->setToolTip(tp);
+    WT_labl = new QLabel("Min. Wall Thickness (t<sub>min</sub>):");
+    WT_labl->setToolTip(tp);
+    WT_widg = new QTextEdit;
+    WT_widg->setReadOnly(true);
+    WT_widg->setToolTip(tp);
 
- //--------------------------------------------------------------------- Logo -
+    //------------------------------------------------------------------ Logo -
 
- QPixmap mypix (":/resources/VersaProfiles_Horizontal_COUL.png");
- qlogo = new QLabel;
- qlogo->setPixmap(mypix);
- qlogo->setScaledContents(true);
- qlogo->setFixedSize(0, 0);
+    QPixmap mypix (":/resources/VersaProfiles_Horizontal_COUL.png");
+    qlogo = new QLabel;
+    qlogo->setPixmap(mypix);
+    qlogo->setScaledContents(true);
+    qlogo->setFixedSize(0, 0);
 
- //-------------------------------------------------------------- Main Layout -
+    //----------------------------------------------------------- Main Layout -
 
- QGridLayout *layout = new QGridLayout;
- int row = 0;
- layout->addWidget(qlabl1, row, 0);
- layout->addWidget(nps_widg, row, 1);  
- row = row + 1;
- layout->addWidget(sdr_labl, row, 0);
- layout->addWidget(sdr_widg, row, 1);
- row = row + 1;
- layout->addWidget(OD_labl, row, 0);
- layout->addWidget(OD_widg, row, 1, 1, 3);
- row = row + 1;
- layout->addWidget(ID_labl, row, 0);
- layout->addWidget(ID_widg, row, 1, 1, 3);
- row = row + 1;
- layout->addWidget(WT_labl, row, 0);
- layout->addWidget(WT_widg, row, 1, 1, 3);
- row = row +1;
- layout->setRowMinimumHeight(row, 25);
- row = row +1;
- layout->addWidget(qlogo, row, 0, 1, 3); 
- layout->addWidget(nps_info, row, 3);
+    QGridLayout *layout = new QGridLayout;
+    int row = 0;
+    layout->addWidget(qlabl1, row, 0);
+    layout->addWidget(nps_widg, row, 1);
+    row = row + 1;
+    layout->addWidget(sdr_labl, row, 0);
+    layout->addWidget(sdr_widg, row, 1);
+    row = row + 1;
+    layout->addWidget(OD_labl, row, 0);
+    layout->addWidget(OD_widg, row, 1, 1, 3);
+    row = row + 1;
+    layout->addWidget(ID_labl, row, 0);
+    layout->addWidget(ID_widg, row, 1, 1, 3);
+    row = row + 1;
+    layout->addWidget(WT_labl, row, 0);
+    layout->addWidget(WT_widg, row, 1, 1, 3);
+    row = row +1;
+    layout->setRowMinimumHeight(row, 25);
+    row = row +1;
+    layout->addWidget(qlogo, row, 0, 1, 3);
+    layout->addWidget(nps_info, row, 3);
 
 
- layout->setColumnStretch(5, 100);
+    layout->setColumnStretch(5, 100);
 
- this->setLayout(layout);
- this->npsChanged();
+    this->setLayout(layout);
+    this->npsChanged();
 
 connect(nps_widg, SIGNAL(currentIndexChanged(int)), this, SLOT (npsChanged()));
 connect(sdr_widg, SIGNAL(valueChanged(double)), this, SLOT (npsChanged()));
