@@ -301,8 +301,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //-------------------------------------------------------------------- BP -
 
-    tp = "<p>Burst pressure requirements for water at 73°F (23°C) for ";
-    tp += "DR-PR PE plastic pipe.</P>";
+    tp = "<p>Burst pressure (BP) requirements for water at 73°F (23°C) for ";
+    tp += "DR-PR PE plastic pipe. BP is calculated with:</p>";
+    tp += "<p align=center>BP = 2*σ<sub>y</sub> / (DR-1)</p>";
+    tp += "<p>where σ<sub>y</sub> is the tensile strength at yield of the ";
+    tp += "PE pipe material, whose values are specified as in Table 5 of:<p>";
+    tp += "<p><i>";
+    tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
+    tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter.";
+    tp += "</i></p>";
 
     BP_labl = new QLabel("Min. Burst Pressure (BP) :");
     BP_labl->setToolTip(tp);
@@ -315,7 +322,15 @@ MainWindow::MainWindow(QWidget *parent) :
     //-------------------------------------------------------------------- PR -
 
     tp = "<p>Water pressure ratings (PR) at 73°F (23°C) for ";
-    tp += "DR-PR PE plastic pipe.</P>";
+    tp += "DR-PR PE plastic pipe. PR is calculated with</p>";
+    tp += "<p align=center>PR = 2*HDB / (DR-1)</p>";
+    tp += "<p>where HDB is the hydrostatic design stress for water at ";
+    tp += "73°F (23°C). Values of HDB for the PE materials are specified as ";
+    tp += "in Table 1 of:<p>";
+    tp += "<p><i>";
+    tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
+    tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter.";
+    tp += "</i></p>";
 
     PR_labl = new QLabel("Pressure Rating (PR) :");
     PR_labl->setToolTip(tp);
@@ -361,11 +376,12 @@ MainWindow::MainWindow(QWidget *parent) :
     row = row +1;
     layout->setRowMinimumHeight(row, 25);
     row = row + 1;
-    layout->addWidget(BP_labl, row, 0);
-    layout->addWidget(BP_widg, row, 1, 1, 3);
-    row = row + 1;
     layout->addWidget(PR_labl, row, 0);
     layout->addWidget(PR_widg, row, 1, 1, 3);
+    row = row + 1;
+    layout->addWidget(BP_labl, row, 0);
+    layout->addWidget(BP_widg, row, 1, 1, 3);
+
     row = row +1;
     layout->setRowMinimumHeight(row, 25);
     row = row +1;
