@@ -46,16 +46,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //using namespace std;
 #include <algorithm>    // std::min
 
-QString version("0.1");
+QString version("0.2");
 
-std::vector<std::string> IPS = {"1/8", "1/4", "3/8", "1/2", "3/4", "1",
-"1 1/4", "1 1/2", "2", "2 1/2", "3", "3 1/2", "4", "5", "6", "8" , "10"};
+std::vector<std::string> IPS = {"1/2", "3/4", "1", "1 1/4", "1 1/2", "2",
+                                "2 1/2", "3", "3 1/2", "4", "5", "6", "8" ,
+                                "10", "12", "14", "16", "18"};
 
-std::vector<double> OD = {0.405, 0.540, 0.675, 0.840, 1.050, 1.315, 1.660,
-1.900, 2.375, 2.875, 3.500, 4.000, 4.500, 5.563, 6.625, 8.625, 10.750};
+std::vector<double> OD = {0.840, 1.050, 1.315, 1.660, 1.900, 2.375, 2.875,
+                          3.500, 4.000, 4.500, 5.563, 6.625, 8.625, 10.750,
+                          12.750, 14.000, 16.000, 18.000};
 
-std::vector<double> ODtol = {0.004, 0.004, 0.004, 0.004, 0.004, 0.005, 0.005,
-0.006, 0.006, 0.007, 0.008, 0.008, 0.009, 0.010, 0.011, 0.013, 0.015};
+std::vector<double> ODtol = {0.004, 0.004, 0.005, 0.005, 0.006, 0.006, 0.007,
+                             0.008, 0.009, 0.009, 0.011, 0.011, 0.013, 0.015,
+                             0.017, 0.063, 0.072, 0.081};
+
+std::vector<std::string> PE = {"PE1404", "PE2708", "PE3608", "PE4608",
+                               "PE4710"};
+std::vector<double> HDS23 = {400, 800, 800, 800, 1000};
+std::vector<double> ATS = {1250, 2520, 2900, 2900, 2900};
 
 int main(int argv, char **args)
 {
@@ -179,7 +187,7 @@ MainWindow::MainWindow(QWidget *parent) :
 // ============================================================================
 {
     this->setWindowIcon(QIcon(":/resources/versalogo.png"));
-    this->setWindowTitle("Pipe Size Calculator");
+    this->setWindowTitle("Pipe Size Calculator v" + version);
 
     units = new bool(1);
     qinfo = new InfoWindow(this);
@@ -218,26 +226,29 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //-------------------------------------------------------------------- OD -
 
-    tp = "<p>The outside diameters and tolerances for the IPS values of ";
-    tp += "1/2, 3/4, 1, 1 1/4, 1 1/2, 2, 3, 4, 6, 8, and 10 ";
-    tp += "are specified as in Table 2 of:<p>";
+    tp = "<p>The outside diameters are specified as in Table 2 of:";
+    tp += "<p><i>";
+    tp += "ANSI B36.10-1979: American National Standard for Welded and ";
+    tp += "Seamless Wrought Steel Pipe.";
+    tp += "</i></p>";
+
+    tp += "<p>The outside diameter tolerances are specified as in ";
+    tp += "Table 2 of:<p>";
 
     tp += "<p><i>";
     tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
-    tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter";
+    tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter.";
     tp += "</i></p>";
 
-    tp += "The outside diameters and tolerances for the remaining IPS values ";
-    tp += "(1/8, 1/4, 3/8, 2 1/2, 3 1/2, 5 are specified as in ";
-    tp += "Table 1 of:</p>)";
+    tp += "The outside diameters and tolerances for the IPS values not ";
+    tp += "listed in Table 2 of ASTM D3035-1 (2 1/2, 3 1/2, and 5) ";
+    tp += "are specified such that their tolerances correspond to the same ";
+    tp += "percentage of the outside diameter as those for the closest ";
+    tp += "listed diameter.</p>";
 
-    tp += "<p><i>";
-    tp += "ASTM D2241-04a: Standard Specification for Poly(Vinyl Chloride)";
-    tp += "(PVC) Pressure-Rated Pipe (SDR Series)";
-    tp += "</i></p>";
-
-    OD_labl = new QLabel("Outside Diameter (OD):");
+    OD_labl = new QLabel("Outside Diameter (OD) :");
     OD_labl->setToolTip(tp);
+
     OD_widg = new QTextEdit;
     OD_widg->setReadOnly(true);
     OD_widg->setToolTip(tp);
@@ -250,8 +261,9 @@ MainWindow::MainWindow(QWidget *parent) :
     tp += "<p>where:</p>";
     tp += "<p align=center>t<sub>avg</sub> = t<sub>min</sub> + tol/2</p>";
 
-    ID_labl = new QLabel("Inside Diameter (ID):");
+    ID_labl = new QLabel("Inside Diameter (ID) :");
     ID_labl->setToolTip(tp);
+
     ID_widg = new QTextEdit;
     ID_widg->setReadOnly(true);
     ID_widg->setToolTip(tp);
@@ -270,11 +282,48 @@ MainWindow::MainWindow(QWidget *parent) :
     tp += "<p>The lowest permitted wall thickness is 0.060 in., while the ";
     tp += "lowest permitted tolerance is 0.020 in.";
 
-    WT_labl = new QLabel("Min. Wall Thickness (t<sub>min</sub>):");
+    WT_labl = new QLabel("Min. Wall Thickness (t<sub>min</sub>) :");
     WT_labl->setToolTip(tp);
+
     WT_widg = new QTextEdit;
     WT_widg->setReadOnly(true);
     WT_widg->setToolTip(tp);
+
+    //-------------------------------------------------------------------- PE -
+
+    PE_labl = new QLabel("PE Pipe Material :");
+    PE_widg = new QComboBox;
+
+    for (std::size_t i = 0, max = PE.size(); i != max; ++i)
+    {
+        PE_widg->addItem(PE[i].c_str());
+    }
+
+    //-------------------------------------------------------------------- BP -
+
+    tp = "<p>Burst pressure requirements for water at 73°F (23°C) for ";
+    tp += "DR-PR PE plastic pipe.</P>";
+
+    BP_labl = new QLabel("Min. Burst Pressure (BP) :");
+    BP_labl->setToolTip(tp);
+
+    BP_widg = new QLineEdit;
+    BP_widg->setReadOnly(true);
+    BP_widg->setToolTip(tp);
+    BP_widg->setAlignment(Qt::AlignHCenter);
+
+    //-------------------------------------------------------------------- PR -
+
+    tp = "<p>Water pressure ratings (PR) at 73°F (23°C) for ";
+    tp += "DR-PR PE plastic pipe.</P>";
+
+    PR_labl = new QLabel("Pressure Rating (PR) :");
+    PR_labl->setToolTip(tp);
+
+    PR_widg = new QLineEdit;
+    PR_widg->setReadOnly(true);
+    PR_widg->setToolTip(tp);
+    PR_widg->setAlignment(Qt::AlignHCenter);
 
     //------------------------------------------------------------------ Logo -
 
@@ -294,6 +343,12 @@ MainWindow::MainWindow(QWidget *parent) :
     layout->addWidget(sdr_labl, row, 0);
     layout->addWidget(sdr_widg, row, 1);
     row = row + 1;
+    layout->addWidget(PE_labl, row, 0);
+    layout->addWidget(PE_widg, row, 1);
+    row = row +1;
+    layout->setRowMinimumHeight(row, 25);
+
+    row = row + 1;
     layout->addWidget(OD_labl, row, 0);
     layout->addWidget(OD_widg, row, 1, 1, 3);
     row = row + 1;
@@ -302,6 +357,15 @@ MainWindow::MainWindow(QWidget *parent) :
     row = row + 1;
     layout->addWidget(WT_labl, row, 0);
     layout->addWidget(WT_widg, row, 1, 1, 3);
+
+    row = row +1;
+    layout->setRowMinimumHeight(row, 25);
+    row = row + 1;
+    layout->addWidget(BP_labl, row, 0);
+    layout->addWidget(BP_widg, row, 1, 1, 3);
+    row = row + 1;
+    layout->addWidget(PR_labl, row, 0);
+    layout->addWidget(PR_widg, row, 1, 1, 3);
     row = row +1;
     layout->setRowMinimumHeight(row, 25);
     row = row +1;
@@ -316,6 +380,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 connect(nps_widg, SIGNAL(currentIndexChanged(int)), this, SLOT (npsChanged()));
 connect(sdr_widg, SIGNAL(valueChanged(double)), this, SLOT (npsChanged()));
+connect(PE_widg, SIGNAL(currentIndexChanged(int)), this, SLOT (npsChanged()));
 connect(nps_info, SIGNAL(clicked(bool)), this, SLOT (showInfo()));
 }
 
@@ -357,35 +422,71 @@ void MainWindow::showInfo()  // ----------------------------------- Show Info -
 }
 void MainWindow::npsChanged()  // -------------------------------- npsChanged -
 {
- int i = nps_widg->currentIndex();
- double od = OD[i];
- double sdr = sdr_widg->value();
- double tmin = std::max(0.060, od / sdr);  // minimum wall thickness
- double ttol = std::max(0.02, tmin*0.12);  // tolerance
- double tmean = tmin + ttol/2;
+    QString pm = QString::fromUtf8(" ± ");
+    QString t;
 
- double id = std::max(0.0, od - (2.0*tmean));
- double idtol = ttol/2 + ODtol[i];
+    int i = nps_widg->currentIndex();
+    double od = OD[i];
 
- //std::cout << s << std::endl;
+    t = "<p align=center>" + QString::number(od, 'f', 3) + " in.";
+    t += pm + QString::number(ODtol[i], 'f', 3) + " in.<br>";
+    t += "(" + QString::number(od*25.4, 'f', 2) + " mm" + pm;
+    t += QString::number(ODtol[i]*25.4, 'f', 2) + " mm)</p>";
+    OD_widg->setText(t);
 
- QString pm = QString::fromUtf8(" ± ");
+    double sdr = sdr_widg->value();
+    double tmin = std::max(0.060, od / sdr);  // minimum wall thickness
+    double ttol = std::max(0.02, tmin*0.12);  // tolerance
+    double tmean = tmin + ttol/2;
 
- QString t1 = "<p align=center>" + QString::number(od, 'f', 3) + " in." + pm;
- t1 += QString::number(ODtol[i], 'f', 3) + " in.<br>";
- t1 += "(" + QString::number(od*25.4, 'f', 2) + " mm" + pm;
- t1 += QString::number(ODtol[i]*25.4, 'f', 2) + " mm)</p>";
- OD_widg->setText(t1);
+    double id = std::max(0.0, od - (2.0*tmean));  // Inside diameter
+    double idtol = ttol/2 + ODtol[i];
 
- QString t2 = "<p align=center>" + QString::number(id, 'f', 3) + " in." + pm;
- t2 = t2 + QString::number(idtol, 'f', 3) + " in.<br>(";
- t2 = t2 + QString::number(id*25.4, 'f', 2) + " mm" + pm;
- t2 = t2 + QString::number(idtol*25.4, 'f', 2) + " mm)</p>";
- ID_widg->setText(t2);
+    t = "<p align=center>" + QString::number(id, 'f', 3) + " in.";
+    t += pm + QString::number(idtol, 'f', 3) + " in.<br>";
+    t += "(" + QString::number(id*25.4, 'f', 2) + " mm" + pm;
+    t += QString::number(idtol*25.4, 'f', 2) + " mm)</p>";
+    ID_widg->setText(t);
 
- QString t3 = "<p align=center>" + QString::number(tmin, 'f', 3) + " in. + ";
- t3 += QString::number(ttol, 'f', 3) + " in.<br>(";
- t3 += QString::number(tmin*25.4, 'f', 2) + " mm + ";
- t3 += QString::number(ttol*25.4, 'f', 2) + " mm)</p>";
- WT_widg->setText(t3);
+    t = "<p align=center>";
+    if(tmin > 0.060)
+    {
+        t += QString::number(tmin, 'f', 3);
+    }
+    else
+    {
+        t += "<font color=red>" + QString::number(tmin, 'f', 3) + "</font>";
+    }
+    t += " in. + ";
+    if(ttol > 0.02)
+    {
+        t += QString::number(ttol, 'f', 3);
+    }
+    else
+    {
+        t += "<font color=red>" + QString::number(ttol, 'f', 3) + "</font>";
+    }
+    t += " in.<br>(";
+    t += QString::number(tmin*25.4, 'f', 2) + " mm + ";
+    t += QString::number(ttol*25.4, 'f', 2) + " mm)</p>";
+    WT_widg->setText(t);
+
+    // Min. Burst Pressure
+
+    i = PE_widg->currentIndex();
+
+    double ats = ATS[i];  // Apparent Tensile Strength
+    double BP = 2*ats / (sdr-1);
+    t = QString::number(BP, 'f', 0) + " psi";
+    t += " (" + QString::number(BP*0.00689476, 'f', 2) + " MPa)";
+    BP_widg->setText(t);
+
+    // Pressure Rating
+
+    double hds23 = HDS23[i];  // Hydrostatic Design Stress
+    double PR = 2*hds23 / (sdr-1);
+    t = QString::number(PR, 'f', 0) + " psi";
+    t += " (" + QString::number(PR*0.00689476, 'f', 2) + " MPa)";
+    PR_widg->setText(t);
+
 }

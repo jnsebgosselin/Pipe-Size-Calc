@@ -35,6 +35,12 @@ private:
  QTextEdit *ID_widg;
  QTextEdit *WT_widg;
  QToolButton *nps_info;
+ QLineEdit *BP_widg;
+ QLabel *BP_labl;
+ QLineEdit *PR_widg;
+ QLabel *PR_labl;
+ QComboBox *PE_widg;
+ QLabel *PE_labl;
 };
 
 #endif // WINDOW_H
