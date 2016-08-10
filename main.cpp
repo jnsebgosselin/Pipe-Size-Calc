@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDesktopWidget>
 #include <QTextBrowser>
 #include <QEventLoop>
+#include <QFrame>
 
 #include "mainwindow.h"
 #include "infowindow.h"
@@ -46,11 +47,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //using namespace std;
 #include <algorithm>    // std::min
 
-QString version("0.2");
+QString version("0.2.1");
 
 std::vector<std::string> IPS = {"1/2", "3/4", "1", "1 1/4", "1 1/2", "2",
-                                "2 1/2", "3", "3 1/2", "4", "5", "6", "8" ,
-                                "10", "12", "14", "16", "18"};
+                                "2 1/2", "3", "3 1/2", "4", "5", "6", "8"};
 
 std::vector<double> OD = {0.840, 1.050, 1.315, 1.660, 1.900, 2.375, 2.875,
                           3.500, 4.000, 4.500, 5.563, 6.625, 8.625, 10.750,
@@ -60,10 +60,11 @@ std::vector<double> ODtol = {0.004, 0.004, 0.005, 0.005, 0.006, 0.006, 0.007,
                              0.008, 0.009, 0.009, 0.011, 0.011, 0.013, 0.015,
                              0.017, 0.063, 0.072, 0.081};
 
-std::vector<std::string> PE = {"PE1404", "PE2708", "PE3608", "PE4608",
-                               "PE4710"};
-std::vector<double> HDS23 = {400, 800, 800, 800, 1000};
-std::vector<double> ATS = {1250, 2520, 2900, 2900, 2900};
+std::vector<std::string> PE = {"PE3408", "PE3608", "PE4710", "Geoperformx"};
+std::vector<double> HDS23 = {800, 800, 1000, 800};
+std::vector<double> HDB = {1600, 1600, 1600, 1250};
+std::vector<double> ATS = {2900, 2900, 2900, 3176};
+std::vector<double> kp = {0.4, 0.4, 0.4, 0.7};
 
 int main(int argv, char **args)
 {
@@ -340,6 +341,46 @@ MainWindow::MainWindow(QWidget *parent) :
     PR_widg->setToolTip(tp);
     PR_widg->setAlignment(Qt::AlignHCenter);
 
+    //------------------------------------------------------------------- HDB -
+
+    //tp = "<p>Burst pressure (BP) requirements for water at 73°F (23°C) for ";
+    //tp += "DR-PR PE plastic pipe. BP is calculated with:</p>";
+    //tp += "<p align=center>BP = 2*σ<sub>y</sub> / (DR-1)</p>";
+    //tp += "<p>where σ<sub>y</sub> is the tensile strength at yield of the ";
+    //tp += "PE pipe material, whose values are specified as in Table 5 of:<p>";
+    //tp += "<p><i>";
+    //tp += "ASTM D3035-15: Standard Specification for Polyethylene (PE) ";
+    //tp += "Plastic Pipe (DR-PR) Based on Controlled Outside Diameter.";
+    //tp += "</i></p>";
+
+    HDB_labl = new QLabel("Hydrostatic Design Basis (HDB) :");
+    //HDB_labl->setToolTip(tp);
+
+    HDB_widg = new QLineEdit;
+    HDB_widg->setReadOnly(true);
+    //HDB_widg->setToolTip(tp);
+    HDB_widg->setAlignment(Qt::AlignHCenter);
+
+    //-------------------------------------------------------------------- kp -
+
+    kp_labl = new QLabel("Pipe thermal conductivity (kp) :");
+    //PR_labl->setToolTip(tp);
+
+    kp_widg = new QTextEdit;
+    kp_widg->setReadOnly(true);
+    //Rp_widg->setToolTip(tp);
+    kp_widg->setAlignment(Qt::AlignHCenter);
+
+    //-------------------------------------------------------------------- Rp -
+
+    Rp_labl = new QLabel("Pipe thermal resistance (Rp) :");
+    //PR_labl->setToolTip(tp);
+
+    Rp_widg = new QTextEdit;
+    Rp_widg->setReadOnly(true);
+    //Rp_widg->setToolTip(tp);
+    Rp_widg->setAlignment(Qt::AlignHCenter);
+
     //------------------------------------------------------------------ Logo -
 
     QPixmap mypix (":/resources/VersaProfiles_Horizontal_COUL.png");
@@ -360,7 +401,12 @@ MainWindow::MainWindow(QWidget *parent) :
     row = row + 1;
     layout->addWidget(PE_labl, row, 0);
     layout->addWidget(PE_widg, row, 1);
+
     row = row +1;
+    QFrame *hsep = new QFrame;
+    hsep->setFrameStyle(52);
+    layout->addWidget(hsep, row, 0, 1, 4);
+    layout->setRowMinimumHeight(row, 25);
     layout->setRowMinimumHeight(row, 25);
 
     row = row + 1;
@@ -374,20 +420,39 @@ MainWindow::MainWindow(QWidget *parent) :
     layout->addWidget(WT_widg, row, 1, 1, 3);
 
     row = row +1;
+    QFrame *hsep2 = new QFrame;
+    hsep2->setFrameStyle(52);
+    layout->addWidget(hsep2, row, 0, 1, 4);
     layout->setRowMinimumHeight(row, 25);
+
+    row = row + 1;
+    layout->addWidget(HDB_labl, row, 0);
+    layout->addWidget(HDB_widg, row, 1, 1, 3);
     row = row + 1;
     layout->addWidget(PR_labl, row, 0);
     layout->addWidget(PR_widg, row, 1, 1, 3);
+    //row = row + 1;
+    //layout->addWidget(BP_labl, row, 0);
+    //layout->addWidget(BP_widg, row, 1, 1, 3);
+
+    row = row +1;
+    QFrame *hsep3 = new QFrame;
+    hsep3->setFrameStyle(52);
+    layout->addWidget(hsep3, row, 0, 1, 4);
+    layout->setRowMinimumHeight(row, 25);
+
     row = row + 1;
-    layout->addWidget(BP_labl, row, 0);
-    layout->addWidget(BP_widg, row, 1, 1, 3);
+    layout->addWidget(kp_labl, row, 0);
+    layout->addWidget(kp_widg, row, 1, 1, 3);
+    row = row + 1;
+    layout->addWidget(Rp_labl, row, 0);
+    layout->addWidget(Rp_widg, row, 1, 1, 3);
 
     row = row +1;
     layout->setRowMinimumHeight(row, 25);
     row = row +1;
     layout->addWidget(qlogo, row, 0, 1, 3);
     layout->addWidget(nps_info, row, 3);
-
 
     layout->setColumnStretch(5, 100);
 
@@ -403,9 +468,14 @@ connect(nps_info, SIGNAL(clicked(bool)), this, SLOT (showInfo()));
 void MainWindow::show()  // -------------------------------------------- Show -
 {
  QFontMetrics fm(ID_widg->fontMetrics());
- int pxw = fm.boundingRect("(666.66 mm + 66.66 mm)").width() + 12;
- int pxh = fm.boundingRect("(666.66 mm)").height()*2 + 12;
 
+ QString t = "0.00 BTU/hr·ft·ºF (0.0 W/m·K)";
+
+ int pxw = fm.boundingRect(t).width() + 12;
+ int pxh = fm.boundingRect(t).height()*2 + 12;
+
+ //int pxw = fm.boundingRect("(666.66 mm + 66.66 mm)").width() + 12;
+ //int pxh = fm.boundingRect("(666.66 mm)").height()*2 + 12;
 
  OD_widg->setFixedWidth(pxw);
  OD_widg->setFixedHeight(pxh);
@@ -415,6 +485,12 @@ void MainWindow::show()  // -------------------------------------------- Show -
 
  WT_widg->setFixedWidth(pxw);
  WT_widg->setFixedHeight(pxh);
+
+ kp_widg->setFixedWidth(pxw);
+ kp_widg->setFixedHeight(pxh);
+
+ Rp_widg->setFixedWidth(pxw);
+ Rp_widg->setFixedHeight(pxh);
 
  double h = 36;
  double w = h/163*1297;
@@ -487,9 +563,15 @@ void MainWindow::npsChanged()  // -------------------------------- npsChanged -
     t += QString::number(ttol*25.4, 'f', 2) + " mm)</p>";
     WT_widg->setText(t);
 
-    // Min. Burst Pressure
-
     i = PE_widg->currentIndex();
+
+    // Hydrostatic Design Basis
+
+    t = QString::number(HDB[i], 'f', 0) + " psi";
+    t += " (" + QString::number(HDB[i]*0.00689476, 'f', 2) + " MPa)";
+    HDB_widg->setText(t);
+
+    // Min. Burst Pressure
 
     double ats = ATS[i];  // Apparent Tensile Strength
     double BP = 2*ats / (sdr-1);
@@ -504,5 +586,20 @@ void MainWindow::npsChanged()  // -------------------------------- npsChanged -
     t = QString::number(PR, 'f', 0) + " psi";
     t += " (" + QString::number(PR*0.00689476, 'f', 2) + " MPa)";
     PR_widg->setText(t);
+
+    // Thermal Conductivity
+
+    t = "<p align=center>";
+    t += QString::number(kp[i]/1.73, 'f', 2) + " BTU/hr·ft·ºF<br>";
+    t += "(" + QString::number(kp[i], 'f', 1) + " W/m·K)</p>";
+    kp_widg->setText(t);
+
+    // Thermal Resistance
+
+    double Rp = std::log (od/id) / (2*3.1416*kp[i]);
+    t = "<p align=center>";
+    t += QString::number(Rp*1.73, 'f', 5) + " hr·ft·ºF/BTU<br>";
+    t += "(" + QString::number(Rp, 'f', 5) + " m·K/W)</p>";
+    Rp_widg->setText(t);
 
 }
