@@ -102,9 +102,9 @@ InfoWindow::InfoWindow(QWidget *parent) :
     lic += "Pipe Size Calc<br>Version " + version;
     lic += "</h1>";
 
-    lic += "<p align=center>Copyright 2016 ";
-    lic += "";
-    lic += "Jean-S&eacute;bastien Gosselin<br>";
+    lic += "<p align=center>Copyright 2016 Versaprofiles</p>";
+    lic += "<p align=center>";
+    lic += "Created by Jean-S&eacute;bastien Gosselin<br>";
     lic += "jean-sebastien.gosselin@ete.inrs.ca";
     lic += "</p>";
 
